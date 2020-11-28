@@ -6,7 +6,7 @@ RUN pip install certbot-dns-ovh
 
 COPY certbot.cron /etc/cron.d/cerbotCron
 COPY certbot.logrotate /etc/logrotate.d/certbot
-COPY certbot.sh /certbot-renew.sh
+COPY certbot.sh /certbot.sh
 RUN chmod +x /certbot.sh
 
 VOLUME [ "/etc/letsencrypt" ]
