@@ -2,10 +2,10 @@
 
 if [ ! -f /root/.ovhapi ]; then
     echo "dns_ovh_endpoint = ovh-eu" > /root/.ovhapi 
-    echo "dns_ovh_application_key = $OVH_KEY" >> /root/.ovhapi
+    echo "dns_ovh_application_key = $OVH_AKEY" >> /root/.ovhapi
     echo "dns_ovh_application_secret = $OVH_SECRET" >> /root/.ovhapi
-    echo "dns_ovh_consumer_key = $OVH_KEY" >> /root/.ovhapi
-    chmod 600 /root/.ovhapi
+    echo "dns_ovh_consumer_key = $OVH_CKEY" >> /root/.ovhapi    
+	chmod 600 /root/.ovhapi
 fi
 
 if [ ! -f /root/start.lock ]; then
