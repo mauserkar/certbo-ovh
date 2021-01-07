@@ -8,7 +8,7 @@ if [ ! -f /root/.ovhapi ]; then
     chmod 600 /root/.ovhapi
 fi
 
-if [ ! -f /root/start.lock ]; then
+if [ ! -f /root/start.lock ] && [ "$(ls /etc/letsencrypt" ] ; then
     touch /root/start.lock
     /usr/local/bin/certbot certonly  \
         --dns-ovh \
@@ -18,10 +18,11 @@ if [ ! -f /root/start.lock ]; then
         --email $CERTBOT_EMAIL \
         -d $CERTBOT_DOMAIN \
         -d *.$CERTBOT_DOMAIN
+    echo "cron start"
     cron -f 8
 fi
 
-if [ -f /root/start.lock ]; then
+if [ -f /root/start.lock ] ; then
     /usr/local/bin/certbot certonly \
         --dns-ovh \
         --dns-ovh-credentials /root/.ovhapi \
