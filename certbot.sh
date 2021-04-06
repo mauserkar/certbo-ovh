@@ -8,27 +8,38 @@ if [ ! -f /root/.ovhapi ]; then
     chmod 600 /root/.ovhapi
 fi
 
-if [ ! -f /root/start.lock ] && [ "$(ls /etc/letsencrypt" ] ; then
+CHECKEMPTYFOLDER=$(test -z "$(ls -A /etc/letsencrypt)"; echo $?)
+
+if [ ! -f /root/start.lock ] && [ $CHECKEMPTYFOLDER -eq 0 ]; then
     touch /root/start.lock
+    echo "### Creating cert: $(date +%H%M%S-%d%m%Y) ###"
     /usr/local/bin/certbot certonly  \
         --dns-ovh \
         --dns-ovh-credentials /root/.ovhapi \
+        --dns-ovh-propagation-seconds 70 \
         --non-interactive \
         --agree-tos \
-        --email $CERTBOT_EMAIL \
-        -d $CERTBOT_DOMAIN \
-        -d *.$CERTBOT_DOMAIN
-    echo "cron start"
-    cron -f 8
+        --email "$CERTBOT_EMAIL" \
+        -d "$CERTBOT_DOMAIN" \
+        -d "*.$CERTBOT_DOMAIN"
+    if [ $? -eq 0 ]; then
+        echo "### cron start: $(date +%H%M%S-%d%m%Y) ###"
+        cron -f 8
+    else
+        echo "### Fail to create cert: $(date +%H%M%S-%d%m%Y) ###"
+        exit 1
+    fi
 fi
 
 if [ -f /root/start.lock ] ; then
+    echo "### Renew cert: $(date +%H%M%S-%d%m%Y) ###"
     /usr/local/bin/certbot certonly \
         --dns-ovh \
         --dns-ovh-credentials /root/.ovhapi \
+        --dns-ovh-propagation-seconds 70 \
         --non-interactive \
-        --agree-tos \ 
-        --email $CERTBOT_EMAIL \
-        -d $CERTBOT_DOMAIN \ 
-        -d *.$CERTBOT_DOMAIN
+        --agree-tos \
+        --email "$CERTBOT_EMAIL" \
+        -d "$CERTBOT_DOMAIN" \
+        -d "*.$CERTBOT_DOMAIN"
 fi
